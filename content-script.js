@@ -12,6 +12,11 @@
     return;
   }
   const { clampNumber, formatTime, parseTimeString, isRangeValid } = utils;
+  const extensionVersion = (() => {
+    const runtime = typeof browser !== "undefined" ? browser.runtime : chrome?.runtime;
+    return runtime?.getManifest ? runtime.getManifest().version : "";
+  })();
+
   const storageApi = (() => {
     const api = typeof browser !== "undefined" ? browser.storage : chrome?.storage;
     if (!api?.local) {
@@ -266,6 +271,7 @@
             />
           </a>
         </div>
+        <div class="yt-looper-version" data-role="version"></div>
       </div>
     `;
 
@@ -371,7 +377,12 @@
       toggleButton: toggleBtn,
       status,
       wrapper: null,
+      versionEl: panel.querySelector("[data-role='version']"),
     };
+
+    if (state.ui.versionEl && extensionVersion) {
+      state.ui.versionEl.textContent = `v${extensionVersion}`;
+    }
 
     return panel;
   };

@@ -3,9 +3,23 @@
   "name": "YouTube Looper",
   "version": "0.1.1",
   "description": "Loop segments of YouTube videos.",
+  "author": "Sudhir Babu Nakka",
+  "homepage_url": "https://github.com/sudhir-asuracore/firefox-youtube-looper",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "support-ytlooper@sudhirnakka.com",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
   "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
     "48": "icons/icon.svg",
-    "96": "icons/icon.svg"
+    "64": "icons/icon-64.png",
+    "96": "icons/icon.svg",
+    "128": "icons/icon-128.png"
   },
   "permissions": [
     "storage"

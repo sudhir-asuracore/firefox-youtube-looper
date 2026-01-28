@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION=$(python - <<'PY'
-import json
-from pathlib import Path
-print(json.loads(Path("manifest.json").read_text()).get("version", "0.0.0"))
-PY
-)
+VERSION=$(sed -n 's/^[[:space:]]*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' manifest.json | head -n 1)
+if [ -z "${VERSION}" ]; then
+  VERSION="0.0.0"
+fi
 
 mkdir -p dist
 zip -r "dist/yt-looper-${VERSION}.zip" \
   manifest.json \
+  icons \
   loop-utils.js \
   content-script.js \
   content-style.css

@@ -19,6 +19,7 @@
   font-family: "Libre Franklin", "Trebuchet MS", sans-serif;
   color: var(--yt-looper-ink);
   overflow-x: auto;
+  position: relative;
 }
 
 .yt-looper-toggle {
@@ -80,6 +81,15 @@
   display: block;
   height: 36px;
   border: 0;
+}
+
+.yt-looper-version {
+  position: absolute;
+  right: 10px;
+  bottom: 6px;
+  font-size: 10px;
+  font-style: italic;
+  color: #9a8f84;
 }
 
 .yt-looper-divider {
