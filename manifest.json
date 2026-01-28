@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTube Looper",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Loop segments of YouTube videos.",
   "author": "Sudhir Babu Nakka",
   "homepage_url": "https://github.com/sudhir-asuracore/firefox-youtube-looper",
@@ -9,7 +9,9 @@
     "gecko": {
       "id": "support-ytlooper@sudhirnakka.com",
       "data_collection_permissions": {
-        "required": ["none"]
+        "required": [
+          "none"
+        ]
       }
     }
   },
