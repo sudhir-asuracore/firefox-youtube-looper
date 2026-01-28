@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Looper",
+  "version": "0.1.0",
+  "description": "Loop segments of YouTube videos.",
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["https://www.youtube.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["loop-utils.js", "content-script.js"],
+      "css": ["content-style.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
