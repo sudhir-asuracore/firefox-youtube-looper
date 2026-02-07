@@ -255,6 +255,20 @@
         <div class="yt-looper-divider" aria-hidden="true"></div>
         <div class="yt-looper-section yt-looper-section-status">
           <span class="yt-looper-status" data-error="0">Loop idle</span>
+          <div class="yt-looper-version-block">
+            <div class="yt-looper-version-row">
+              <span class="yt-looper-version" data-role="version"></span>
+              <span class="yt-looper-version-sep" aria-hidden="true">|</span>
+              <a
+                class="yt-looper-report"
+                href="https://github.com/sudhir-asuracore/firefox-youtube-looper/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Source/Report Issue
+              </a>
+            </div>
+          </div>
         </div>
         <div class="yt-looper-divider" aria-hidden="true"></div>
         <div class="yt-looper-section yt-looper-section-kofi">
@@ -266,12 +280,11 @@
           >
             <img
               src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
-              height="36"
+              height="26"
               alt="Buy Me a Coffee at ko-fi.com"
             />
           </a>
         </div>
-        <div class="yt-looper-version" data-role="version"></div>
       </div>
     `;
 
