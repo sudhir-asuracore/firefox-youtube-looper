@@ -1,7 +1,7 @@
 [![CI](https://github.com/sudhir-asuracore/firefox-youtube-looper/actions/workflows/ci.yml/badge.svg)](https://github.com/sudhir-asuracore/firefox-youtube-looper/actions/workflows/ci.yml)
 [![Release Package](https://github.com/sudhir-asuracore/firefox-youtube-looper/actions/workflows/release.yml/badge.svg)](https://github.com/sudhir-asuracore/firefox-youtube-looper/actions/workflows/release.yml)
 
-# YouTube Looper (Firefox)
+# YouTube Section Looper (Firefox)
 
 Loop a segment of any YouTube video directly on the watch page. Set start/end timestamps, choose how many times to repeat, and let it run.
 

@@ -99,7 +99,7 @@
 }
 
 .yt-looper-btn {
-  border: 1px solid var(--yt-looper-border);
+  border: 2px solid var(--yt-looper-accent);
   background: #f1f1f1;
   color: var(--yt-looper-ink);
   padding: 6px 10px;
