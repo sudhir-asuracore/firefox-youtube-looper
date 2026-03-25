@@ -8,6 +8,7 @@ Loop a segment of any YouTube video directly on the watch page. Set start/end ti
 ## Features
 - Set loop start/end via buttons or manual timestamp entry.
 - Repeat a segment infinitely or a fixed number of times.
+- Control video playback speed within the loop.
 - Loop status shown inline under the video controls.
 - Per-video settings persisted locally.
 

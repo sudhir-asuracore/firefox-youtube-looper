@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-python -m json.tool manifest.json > /dev/null
+python3 -m json.tool manifest.json > /dev/null
 
 test -f content-script.js
 

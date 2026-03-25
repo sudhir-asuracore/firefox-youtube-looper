@@ -55,6 +55,8 @@
     repeatCount: 0,
     remaining: null,
     enabled: false,
+    speed: 1.0,
+    shiftPitch: false,
     ui: null,
   };
 
@@ -93,6 +95,8 @@
     state.start = Number.isFinite(saved.start) ? saved.start : null;
     state.end = Number.isFinite(saved.end) ? saved.end : null;
     state.repeatCount = Number.isFinite(saved.repeatCount) ? saved.repeatCount : 0;
+    state.speed = Number.isFinite(saved.speed) ? saved.speed : 1.0;
+    state.shiftPitch = Boolean(saved.shiftPitch);
     state.enabled = Boolean(saved.enabled) && isRangeValid(state.start, state.end);
     state.remaining = state.enabled
       ? (state.repeatCount === 0 ? Infinity : state.repeatCount)
@@ -107,6 +111,8 @@
       start: state.start,
       end: state.end,
       repeatCount: state.repeatCount,
+      speed: state.speed,
+      shiftPitch: state.shiftPitch,
       enabled: state.enabled,
     });
   };
@@ -130,6 +136,12 @@
       state.ui.endInput.value = formatTime(state.end);
     }
     state.ui.repeatInput.value = String(state.repeatCount);
+    if (state.ui.speedValue) {
+      state.ui.speedValue.value = `${state.speed}x`;
+    }
+    if (state.ui.shiftPitchInput) {
+      state.ui.shiftPitchInput.checked = state.shiftPitch;
+    }
     state.ui.toggleButton.textContent = state.enabled ? "Stop Loop" : "Start Loop";
     state.ui.toggleButton.dataset.active = state.enabled ? "1" : "0";
     state.ui.toggleButton.disabled = !isRangeValid(state.start, state.end);
@@ -214,6 +226,12 @@
     }
   };
 
+  const applyPitchState = () => {
+    if (state.videoEl) {
+      state.videoEl.preservesPitch = !state.shiftPitch;
+    }
+  };
+
   const ensureVideoListeners = () => {
     const video = getVideoEl();
     if (!video || video === state.videoEl) {
@@ -224,6 +242,10 @@
     }
     state.videoEl = video;
     state.videoEl.addEventListener("timeupdate", handleTimeUpdate);
+    if (state.speed !== 1.0) {
+      state.videoEl.playbackRate = state.speed;
+    }
+    applyPitchState();
   };
 
   const buildUi = () => {
@@ -243,9 +265,12 @@
         </div>
         <div class="yt-looper-divider" aria-hidden="true"></div>
         <div class="yt-looper-section">
-          <label class="yt-looper-label">Repeat</label>
-          <input class="yt-looper-input" type="number" min="0" step="1" value="0" />
-          <span class="yt-looper-hint">0 = infinite</span>
+          <label class="yt-looper-label" title="0 = infinite">Repeat</label>
+          <input class="yt-looper-input" type="number" min="0" step="1" value="0" title="0 = infinite" />
+        </div>
+        <div class="yt-looper-divider" aria-hidden="true"></div>
+        <div class="yt-looper-section">
+          <button class="yt-looper-btn yt-looper-expander" data-action="expand" title="More settings">⚙ Adv</button>
         </div>
         <div class="yt-looper-divider" aria-hidden="true"></div>
         <div class="yt-looper-section">
@@ -286,16 +311,37 @@
           </a>
         </div>
       </div>
+      <div class="yt-looper-row yt-looper-row-extra" data-expanded="0">
+        <div class="yt-looper-section">
+          <label class="yt-looper-label">Speed</label>
+          <button class="yt-looper-btn yt-looper-btn-step" data-action="speed-down" title="Decrease speed">-</button>
+          <input class="yt-looper-val" data-role="speed" type="text" value="1x" />
+          <button class="yt-looper-btn yt-looper-btn-step" data-action="speed-up" title="Increase speed">+</button>
+        </div>
+        <div class="yt-looper-divider" aria-hidden="true"></div>
+        <div class="yt-looper-section">
+          <label class="yt-looper-checkbox-container" title="Change pitch with speed">
+            <input class="yt-looper-checkbox" type="checkbox" data-role="shift-pitch" />
+            <span class="yt-looper-label">Shift Pitch</span>
+          </label>
+        </div>
+      </div>
     `;
 
     const startBtn = panel.querySelector("[data-action='set-start']");
     const endBtn = panel.querySelector("[data-action='set-end']");
     const toggleBtn = panel.querySelector("[data-action='toggle']");
     const clearBtn = panel.querySelector("[data-action='clear']");
+    const expandBtn = panel.querySelector("[data-action='expand']");
+    const extraRow = panel.querySelector(".yt-looper-row-extra");
     const repeatInput = panel.querySelector(".yt-looper-input");
+    const speedDownBtn = panel.querySelector("[data-action='speed-down']");
+    const speedUpBtn = panel.querySelector("[data-action='speed-up']");
+    const speedValue = panel.querySelector("[data-role='speed']");
     const status = panel.querySelector(".yt-looper-status");
     const startInput = panel.querySelector("[data-role='start']");
     const endInput = panel.querySelector("[data-role='end']");
+    const shiftPitchInput = panel.querySelector("[data-role='shift-pitch']");
 
     startBtn.addEventListener("click", () => {
       if (!state.videoEl) {
@@ -334,6 +380,48 @@
       }
       syncUi();
       void persistState();
+    });
+
+    const updateSpeed = (newSpeed) => {
+      const clamped = clampNumber(newSpeed, 0.25, 4.0);
+      // Round to 2 decimal places to avoid float precision issues
+      state.speed = Math.round(clamped * 100) / 100;
+      if (state.videoEl) {
+        state.videoEl.playbackRate = state.speed;
+      }
+      syncUi();
+      void persistState();
+    };
+
+    speedDownBtn.addEventListener("click", () => {
+      updateSpeed(state.speed - 0.25);
+    });
+
+    speedUpBtn.addEventListener("click", () => {
+      updateSpeed(state.speed + 0.25);
+    });
+
+    speedValue.addEventListener("change", () => {
+      let val = speedValue.value.toLowerCase().replace("x", "");
+      const parsed = Number.parseFloat(val);
+      if (Number.isFinite(parsed)) {
+        updateSpeed(parsed);
+      } else {
+        syncUi();
+      }
+    });
+
+    shiftPitchInput.addEventListener("change", () => {
+      state.shiftPitch = shiftPitchInput.checked;
+      applyPitchState();
+      void persistState();
+    });
+
+    expandBtn.addEventListener("click", () => {
+      const isExpanded = extraRow.dataset.expanded === "1";
+      extraRow.dataset.expanded = isExpanded ? "0" : "1";
+      expandBtn.textContent = "⚙ Adv";
+      expandBtn.dataset.active = isExpanded ? "0" : "1";
     });
 
     const wireTimeInput = (input, type) => {
@@ -387,6 +475,8 @@
       startInput,
       endInput,
       repeatInput,
+      speedValue,
+      shiftPitchInput,
       toggleButton: toggleBtn,
       status,
       wrapper: null,
@@ -444,6 +534,11 @@
       state.enabled = false;
       state.remaining = null;
       await loadState(nextId);
+
+      if (state.videoEl) {
+        state.videoEl.playbackRate = state.speed;
+        applyPitchState();
+      }
     }
     ensureVideoListeners();
     ensureUi();

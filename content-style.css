@@ -9,9 +9,10 @@
 
 #yt-looper-panel {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 12px 16px;
   margin: 12px 0 0;
   border-radius: 14px;
   border: 1px solid var(--yt-looper-border);
@@ -45,6 +46,17 @@
 .yt-looper-row-main {
   flex-wrap: nowrap;
   width: 100%;
+}
+
+.yt-looper-row-extra {
+  display: none;
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px dashed var(--yt-looper-border);
+}
+
+.yt-looper-row-extra[data-expanded="1"] {
+  display: flex;
 }
 
 .yt-looper-title {
@@ -157,9 +169,34 @@
   background: transparent;
 }
 
+.yt-looper-expander {
+  min-width: 60px;
+}
+
+.yt-looper-expander[data-active="1"] {
+  background: var(--yt-looper-accent);
+  color: #fff;
+}
+
 .yt-looper-label {
   font-size: 12px;
   color: var(--yt-looper-muted);
+}
+
+.yt-looper-checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.yt-looper-checkbox {
+  margin: 0;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: var(--yt-looper-accent);
 }
 
 .yt-looper-time {
@@ -174,7 +211,7 @@
 }
 
 .yt-looper-input {
-  width: 72px;
+  width: 48px;
   padding: 6px 8px;
   border-radius: 8px;
   border: 1px solid var(--yt-looper-border);
@@ -182,9 +219,22 @@
   font-size: 12px;
 }
 
-.yt-looper-hint {
-  font-size: 11px;
-  color: var(--yt-looper-muted);
+.yt-looper-btn-step {
+  padding: 4px 8px;
+  font-family: monospace;
+  font-weight: bold;
+}
+
+.yt-looper-val {
+  width: 44px;
+  padding: 6px 4px;
+  border-radius: 8px;
+  border: 1px solid var(--yt-looper-border);
+  background: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--yt-looper-ink);
 }
 
 @media (max-width: 700px) {
