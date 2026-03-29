@@ -24,8 +24,14 @@
     "128": "icons/icon-128.png"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "bookmarks"
   ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
   "host_permissions": [
     "https://www.youtube.com/*"
   ],

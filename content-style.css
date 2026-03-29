@@ -178,6 +178,12 @@
   color: #fff;
 }
 
+.yt-looper-bookmark[data-active="1"] {
+  background: #ffeb3b;
+  border-color: #fdd835;
+  color: #1e1a14;
+}
+
 .yt-looper-label {
   font-size: 12px;
   color: var(--yt-looper-muted);

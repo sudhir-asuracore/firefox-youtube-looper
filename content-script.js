@@ -58,6 +58,7 @@
     speed: 1.0,
     shiftPitch: false,
     ui: null,
+    isBookmarked: false,
   };
 
   const getVideoIdFromUrl = () => {
@@ -98,6 +99,35 @@
     state.speed = Number.isFinite(saved.speed) ? saved.speed : 1.0;
     state.shiftPitch = Boolean(saved.shiftPitch);
     state.enabled = Boolean(saved.enabled) && isRangeValid(state.start, state.end);
+
+    // URL parameters override saved state
+    const urlParams = new URLSearchParams(window.location.search);
+    const ytlS = urlParams.get("ytl_s");
+    const ytlE = urlParams.get("ytl_e");
+    const ytlC = urlParams.get("ytl_c");
+
+    if (ytlS !== null) {
+      const val = parseFloat(ytlS);
+      if (Number.isFinite(val)) state.start = val;
+    }
+    if (ytlE !== null) {
+      const val = parseFloat(ytlE);
+      if (Number.isFinite(val)) state.end = val;
+    }
+    if (ytlC !== null) {
+      const val = parseInt(ytlC, 10);
+      if (Number.isFinite(val) && val >= 0) state.repeatCount = val;
+    }
+    const ytlV = urlParams.get("ytl_v");
+    if (ytlV !== null) {
+      const val = parseFloat(ytlV);
+      if (Number.isFinite(val) && val > 0) state.speed = val;
+    }
+    const ytlP = urlParams.get("ytl_p");
+    if (ytlP !== null) {
+      state.shiftPitch = ytlP === "1";
+    }
+
     state.remaining = state.enabled
       ? (state.repeatCount === 0 ? Infinity : state.repeatCount)
       : null;
@@ -114,6 +144,59 @@
       speed: state.speed,
       shiftPitch: state.shiftPitch,
       enabled: state.enabled,
+    });
+    updateUrlParams();
+  };
+
+  const updateUrlParams = () => {
+    if (!state.videoId) {
+      return;
+    }
+    const url = new URL(window.location.href);
+    let changed = false;
+
+    const setOrRemove = (param, value) => {
+      const current = url.searchParams.get(param);
+      if (value != null && value !== "") {
+        const newVal = String(value);
+        if (current !== newVal) {
+          url.searchParams.set(param, newVal);
+          changed = true;
+        }
+      } else {
+        if (current != null) {
+          url.searchParams.delete(param);
+          changed = true;
+        }
+      }
+    };
+
+    // Use toFixed(2) to avoid long floats in URL, but keep some precision
+    setOrRemove("ytl_s", state.start != null ? Number(state.start.toFixed(2)) : null);
+    setOrRemove("ytl_e", state.end != null ? Number(state.end.toFixed(2)) : null);
+    setOrRemove("ytl_c", state.repeatCount > 0 ? state.repeatCount : null);
+    setOrRemove("ytl_v", state.speed !== 1.0 ? state.speed : null);
+    setOrRemove("ytl_p", state.shiftPitch ? 1 : null);
+
+    if (changed) {
+      window.history.replaceState(null, "", url.toString());
+      checkBookmarkState();
+    }
+  };
+
+  const checkBookmarkState = () => {
+    const runtime = typeof browser !== "undefined" ? browser.runtime : chrome?.runtime;
+    if (!runtime || !state.ui) {
+      return;
+    }
+    runtime.sendMessage({
+      type: "CHECK_BOOKMARK",
+      url: window.location.href
+    }, (response) => {
+      state.isBookmarked = !!response?.exists;
+      if (state.ui.bookmarkButton) {
+        state.ui.bookmarkButton.dataset.active = state.isBookmarked ? "1" : "0";
+      }
     });
   };
 
@@ -145,6 +228,9 @@
     state.ui.toggleButton.textContent = state.enabled ? "Stop Loop" : "Start Loop";
     state.ui.toggleButton.dataset.active = state.enabled ? "1" : "0";
     state.ui.toggleButton.disabled = !isRangeValid(state.start, state.end);
+    if (state.ui.bookmarkButton) {
+      state.ui.bookmarkButton.dataset.active = state.isBookmarked ? "1" : "0";
+    }
     const status = state.enabled
       ? `Looping ${formatTime(state.start)} - ${formatTime(state.end)}`
       : "Loop idle";
@@ -271,6 +357,7 @@
         <div class="yt-looper-divider" aria-hidden="true"></div>
         <div class="yt-looper-section">
           <button class="yt-looper-btn yt-looper-expander" data-action="expand" title="More settings">⚙ Adv</button>
+          <button class="yt-looper-btn yt-looper-bookmark" data-action="bookmark" title="Bookmark loop">⭐</button>
         </div>
         <div class="yt-looper-divider" aria-hidden="true"></div>
         <div class="yt-looper-section">
@@ -333,6 +420,7 @@
     const toggleBtn = panel.querySelector("[data-action='toggle']");
     const clearBtn = panel.querySelector("[data-action='clear']");
     const expandBtn = panel.querySelector("[data-action='expand']");
+    const bookmarkBtn = panel.querySelector("[data-action='bookmark']");
     const extraRow = panel.querySelector(".yt-looper-row-extra");
     const repeatInput = panel.querySelector(".yt-looper-input");
     const speedDownBtn = panel.querySelector("[data-action='speed-down']");
@@ -424,6 +512,46 @@
       expandBtn.dataset.active = isExpanded ? "0" : "1";
     });
 
+    bookmarkBtn.addEventListener("click", () => {
+      // 1. Attempt to trigger the native bookmark shortcut as requested
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const eventParams = {
+        key: 'd',
+        code: 'KeyD',
+        keyCode: 68,
+        which: 68,
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        [isMac ? 'metaKey' : 'ctrlKey']: true
+      };
+      
+      const event = new KeyboardEvent('keydown', eventParams);
+      document.dispatchEvent(event);
+
+      // 2. Fallback: Save silently via background if popup doesn't appear
+      const runtime = typeof browser !== "undefined" ? browser.runtime : chrome?.runtime;
+      if (!runtime) {
+        return;
+      }
+      runtime.sendMessage({
+        type: "CREATE_BOOKMARK",
+        title: document.title,
+        url: window.location.href
+      }, (response) => {
+        if (response?.success) {
+          state.isBookmarked = true;
+          if (state.ui.bookmarkButton) {
+            state.ui.bookmarkButton.dataset.active = "1";
+          }
+          const msg = response.existing ? "Already bookmarked!" : "Bookmark created!";
+          updateStatus(msg, false);
+        } else if (response?.error) {
+          updateStatus(`Error: ${response.error}`, true);
+        }
+      });
+    });
+
     const wireTimeInput = (input, type) => {
       input.addEventListener("focus", () => {
         input.dataset.editing = "1";
@@ -478,6 +606,7 @@
       speedValue,
       shiftPitchInput,
       toggleButton: toggleBtn,
+      bookmarkButton: bookmarkBtn,
       status,
       wrapper: null,
       versionEl: panel.querySelector("[data-role='version']"),
@@ -542,6 +671,7 @@
     }
     ensureVideoListeners();
     ensureUi();
+    checkBookmarkState();
     syncUi();
   };
 
