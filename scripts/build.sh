@@ -10,6 +10,7 @@ mkdir -p dist
 zip -r "dist/yt-looper-${VERSION}.zip" \
   manifest.json \
   icons \
+  background.js \
   loop-utils.js \
   content-script.js \
   content-style.css

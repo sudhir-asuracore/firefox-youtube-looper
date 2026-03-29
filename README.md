@@ -29,6 +29,7 @@ Loop a segment of any YouTube video directly on the watch page. Set start/end ti
 
 ## Development
 - `content-script.js` contains the loop logic and UI injection.
+- `background.js` handles browser-level actions like bookmarking.
 - `content-style.css` contains the injected UI styles.
 - `loop-utils.js` contains shared utilities used by the content script and tests.
 - `npm test` runs basic checks.
