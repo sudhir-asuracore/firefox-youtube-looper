@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Looper",
+  "name": "YouTube Section Looper",
   "version": "0.3.2",
-  "description": "Loop segments of YouTube videos.",
+  "description": "Loop segments of YouTube videos. Modify pitch/speed.",
   "author": "Sudhir Babu Nakka",
   "homepage_url": "https://github.com/sudhir-asuracore/firefox-youtube-looper",
   "browser_specific_settings": {
