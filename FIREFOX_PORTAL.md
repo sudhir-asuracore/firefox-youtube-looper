@@ -18,15 +18,15 @@ YouTube Looper adds a small control panel directly on YouTube watch pages. Set t
 - `https://www.youtube.com/*`: Required to inject the UI and loop logic on YouTube watch pages.
 
 ## Data collection
-This add-on does not collect, transmit, or sell user data. All settings are stored locally in the browser.
+This add-on does not collect, transmit, or sell user data. All settings are stored locally in the browser. See [PRIVACY.md](./PRIVACY.md) for the full privacy policy.
 
 ## Support
-- GitHub Issues: (add your repo URL)
-- Contact email: (add your email)
+- GitHub Issues: https://github.com/sudhir-asuracore/firefox-youtube-looper/issues
+- Contact email: support-ytlooper@sudhirnakka.com
 
 ## Test notes
 - Verified on standard YouTube watch pages and Shorts.
 - Looping and repeat counts behave as expected.
 
 ## Source code
-Provide the GitHub repository URL in the submission.
+https://github.com/sudhir-asuracore/firefox-youtube-looper

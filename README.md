@@ -56,3 +56,6 @@ Issues and pull requests are welcome. Please describe the change clearly and kee
 
 ## License
 MIT. See `LICENSE`.
+
+## Privacy
+We value your privacy. See [PRIVACY.md](PRIVACY.md) for details.
