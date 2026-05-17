@@ -1,7 +1,7 @@
 {
-  "name": "firefox-yt-looper",
-  "version": "0.2.0",
-  "description": "Loop segments of YouTube videos in Firefox.",
+  "name": "youtube-looper",
+  "version": "0.3.1",
+  "description": "Loop segments of YouTube videos.",
   "private": true,
   "scripts": {
     "test": "./scripts/test.sh",

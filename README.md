@@ -1,7 +1,7 @@
 [![CI](https://github.com/sudhir-asuracore/firefox-youtube-looper/actions/workflows/ci.yml/badge.svg)](https://github.com/sudhir-asuracore/firefox-youtube-looper/actions/workflows/ci.yml)
 [![Release Package](https://github.com/sudhir-asuracore/firefox-youtube-looper/actions/workflows/release.yml/badge.svg)](https://github.com/sudhir-asuracore/firefox-youtube-looper/actions/workflows/release.yml)
 
-# YouTube Section Looper (Firefox)
+# YouTube Section Looper
 
 Loop a segment of any YouTube video directly on the watch page. Set start/end timestamps, choose how many times to repeat, and let it run.
 
@@ -12,11 +12,19 @@ Loop a segment of any YouTube video directly on the watch page. Set start/end ti
 - Loop status shown inline under the video controls.
 - Per-video settings persisted locally.
 
-## Install (temporary add-on)
+## Installation
+
+### Firefox
 1. Open Firefox and go to `about:debugging`.
 2. Click **This Firefox**.
 3. Click **Load Temporary Add-on...**.
 4. Select `manifest.json` from this project.
+
+### Chrome / Edge
+1. Open Chrome and go to `chrome://extensions`.
+2. Enable **Developer mode** (toggle in the top right).
+3. Click **Load unpacked**.
+4. Select the project folder.
 
 ## Usage
 1. Open any YouTube watch page.
